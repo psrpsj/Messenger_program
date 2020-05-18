@@ -17,17 +17,34 @@ struct msg_buffer {
     char msg_text[MSG_SIZE];
 } msg;
 
+int checkMessage(char last_message, int msg_id){
+  msgrcv(msg_id, &msg, sizeof(msg), 1, 0);
+  if(strcmp(last_message,msg.msg_text) != 0){
+    printf("New message arrived");
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
 
 int main(int argc, char* argv[]){
 
+  int updated;
   key_t key = 1234;
+  char last_message[MSG_SIZE];
+  char input_message[MSG_SIZE];
   int msgid = msgget(key, 0666 | IPC_CREAT);
   if(msgid == -1){
     perror("msgid error!");
     exit(1);
   }
 
-  char input_message[MSG_SIZE];
+  updated = checkMessage(last_message, msgid);
+  if(updated == 1){
+    strcpy(last_message, msg.msg_text);
+  }
+
   printf("Enter the message to server : ");
   fgets(input_message, MSG_SIZE, stdin);
 
@@ -40,6 +57,10 @@ int main(int argc, char* argv[]){
     }
     printf("Enter the message to server or enter END to end server : ");
     fgets(input_message, MSG_SIZE, stdin);
+    updated = checkMessage(last_message, msgid);
+    if(updated == 1){
+      strcpy(last_message, msg.msg_text);
+    }
   }
 
   msgctl(msgid, IPC_RMID, NULL);
