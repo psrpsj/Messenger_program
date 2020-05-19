@@ -11,60 +11,57 @@
 #include <sys/types.h>
 
 #define MSG_SIZE 512
+char last_message[MSG_SIZE];
+char input_message[MSG_SIZE];
 
 struct msg_buffer {
     long msg_type;
     char msg_text[MSG_SIZE];
 } msg;
 
-int checkMessage(char *last_message, int msg_id){
+void checkMessage(int msg_id){
   msgrcv(msg_id, &msg, sizeof(msg), 1, 0);
-  if(strcmp(last_message,msg.msg_text) != 0){
+  if(msg.msg_text == NULL){
+    printf("No new message\n");
+  }
+  else if(strcmp(last_message, msg.msg_text) != 0){
     printf("New message arrived\n");
-    return 1;
+    strcpy(msg.msg_text, last_message);
+    printf("Arrived message : %s", last_message);
   }
   else{
     printf("No new message\n");
   }
+}
+
+int sendMessage(int msg_id){
+  int result;
+  printf("Enter the message to server : ");
+  fgets(input_message, MSG_SIZE, stdin);
+  strcpy(msg.msg_text, input_message);
+  msg.msg_type = 1;
+  result = msgsnd(msg_id, &msg, sizeof(msg),0);
+  if(result < 0){
+    printf("Error during sending message! \n");
+    return 1;
+  }
+  printf("Message successfully send");
   return 0;
 }
 
 int main(int argc, char* argv[]){
-
-  int updated = 0;
+  int sending;
   key_t key = 1234;
-  char last_message[MSG_SIZE];
-  char input_message[MSG_SIZE];
   int msgid = msgget(key, 0666 | IPC_CREAT);
+  printf("PASF");
   if(msgid == -1){
     perror("msgid error!");
     exit(1);
   }
 
-  updated = checkMessage(last_message, msgid);
-  if(updated == 1){
-    strcpy(last_message, msg.msg_text);
-    printf("Unread Message : %s", last_message);
-  }
-
-  printf("Enter the message to server : ");
-  fgets(input_message, MSG_SIZE, stdin);
-
   while(strcmp(input_message, "END") != 0){
-    strcpy(msg.msg_text, input_message);
-    //printf("%s", msg.msg_text);
-    msg.msg_type = 1;
-    int result = msgsnd(msgid, &msg, sizeof(msg), 0);
-    if(result < 0){
-      printf("Error during sending message\n");
-    }
-
-    updated = checkMessage(last_message, msgid);
-    if(updated == 1){
-      printf("Arrived Message : %s \n", last_message);
-    }
-    printf("Enter the message to server or enter END to end server : ");
-    fgets(input_message, MSG_SIZE, stdin);
+    checkMessage(msgid);
+    sendMessage(msgid);
   }
 
   msgctl(msgid, IPC_RMID, NULL);
