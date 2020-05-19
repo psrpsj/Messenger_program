@@ -17,20 +17,21 @@ struct msg_buffer {
     char msg_text[MSG_SIZE];
 } msg;
 
-int checkMessage(char last_message, int msg_id){
+int checkMessage(char *last_message, int msg_id){
   msgrcv(msg_id, &msg, sizeof(msg), 1, 0);
   if(strcmp(last_message,msg.msg_text) != 0){
-    printf("New message arrived");
+    printf("New message arrived\n");
     return 1;
   }
   else{
-    return 0;
+    printf("No new message\n");
   }
+  return 0;
 }
 
 int main(int argc, char* argv[]){
 
-  int updated;
+  int updated = 0;
   key_t key = 1234;
   char last_message[MSG_SIZE];
   char input_message[MSG_SIZE];
@@ -43,6 +44,7 @@ int main(int argc, char* argv[]){
   updated = checkMessage(last_message, msgid);
   if(updated == 1){
     strcpy(last_message, msg.msg_text);
+    printf("Unread Message : %s", last_message);
   }
 
   printf("Enter the message to server : ");
@@ -50,17 +52,19 @@ int main(int argc, char* argv[]){
 
   while(strcmp(input_message, "END") != 0){
     strcpy(msg.msg_text, input_message);
+    //printf("%s", msg.msg_text);
     msg.msg_type = 1;
     int result = msgsnd(msgid, &msg, sizeof(msg), 0);
     if(result < 0){
-      printf("Error during sending message");
+      printf("Error during sending message\n");
+    }
+
+    updated = checkMessage(last_message, msgid);
+    if(updated == 1){
+      printf("Arrived Message : %s \n", last_message);
     }
     printf("Enter the message to server or enter END to end server : ");
     fgets(input_message, MSG_SIZE, stdin);
-    updated = checkMessage(last_message, msgid);
-    if(updated == 1){
-      strcpy(last_message, msg.msg_text);
-    }
   }
 
   msgctl(msgid, IPC_RMID, NULL);
