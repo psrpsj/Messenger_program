@@ -27,15 +27,19 @@ int main(int argc, char** argv){
   service_addr.sin_addr.s_addr = INADDR_ANY;
 
   while(strcmp(input_message, "end") != 0){
+    socklen_t addrlen;
+
     printf("Enter the message to send or end to terminate : ");
     fgets(input_message, MSG_SIZE - 1, stdin);
 
     sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *) &service_addr, sizeof(service_addr));
 
-    received = recvfrom
+    received = recvfrom(sockfd, (char *)input_message, MSG_SIZE, 0, (struct sockaddr *)&service_addr, &addrlen);
+    input_message[received] = '\0';
+    printf("Arrived message : %s", input_message);
   }
 
-
+  close(sockfd);
   printf("---- Messenger Successfully Terminated ----");
 
   return 0;
