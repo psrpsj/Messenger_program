@@ -14,6 +14,7 @@ int main(int argc, char** argv){
   int sockfd, received;
   char input_message[MSG_SIZE];
   struct sockaddr_in service_addr;
+  socklen_t addrlen;
 
   //Create socket
   sockfd = socket(AF_INET, SOCK_DGRAM,0);
@@ -26,17 +27,19 @@ int main(int argc, char** argv){
   service_addr.sin_port = htons(PORT);
   service_addr.sin_addr.s_addr = INADDR_ANY;
 
-  while(strcmp(input_message, "end") != 0){
-    socklen_t addrlen;
+  printf("Enter the message to send or end to terminate : ");
+  fgets(input_message, MSG_SIZE - 1, stdin);
+  sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *) &service_addr, sizeof(service_addr));
 
-    printf("Enter the message to send or end to terminate : ");
-    fgets(input_message, MSG_SIZE - 1, stdin);
-
-    sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *) &service_addr, sizeof(service_addr));
-
+  while(1){
+    //listen(sockfd, 1);
+    printf("s");
     received = recvfrom(sockfd, (char *)input_message, MSG_SIZE, 0, (struct sockaddr *)&service_addr, &addrlen);
     input_message[received] = '\0';
     printf("Arrived message : %s", input_message);
+    printf("Enter the message to send or end to terminate : ");
+    fgets(input_message, MSG_SIZE - 1, stdin);
+    sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *) &service_addr, sizeof(service_addr));
   }
 
   close(sockfd);
