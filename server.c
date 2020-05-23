@@ -35,15 +35,15 @@ int main(int argc, char** argv){
   input_message[received] = '\0';
   printf("Received message : %s\n", input_message);
 
-  while(strcmp(input_message, "end") != 0){
+  //while(strcmp(input_message, "end") != 0){
     printf("Enter the message to send : ");
     fgets(input_message, MSG_SIZE -1, stdin);
     sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *)&client_addr, addrlen);
-    listen(sockfd, 1);
+    //listen(sockfd, 1);
     received =  recvfrom(sockfd, (char *) input_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &addrlen);
     input_message[received] = '\0';
     printf("Received message : %s\n", input_message);
-  }
+  //}
 
   close(sockfd);
   printf("---- Messenger Successfully Terminated ----");
