@@ -1,7 +1,7 @@
 CC=gcc
 DBFLAGS=-g
 
-all: client.c  server.c
+all: client.c server.c
 	make client
 	make server
 
