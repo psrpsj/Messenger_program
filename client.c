@@ -32,15 +32,15 @@ int main(int argc, char** argv){
   printf("Enter the message to send or end to terminate : ");
   fgets(input_message, MSG_SIZE, stdin);
   sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *) &service_addr, sizeof(service_addr));
-  //while(strcmp(input_message, "end") != 0){
+
+  while(strcmp(input_message, "end") != 10){
     received = recvfrom(sockfd, (char *)received_message, MSG_SIZE, 0, (struct sockaddr *)&service_addr, &addrlen);
-    printf("%d", received);
     received_message[received] = '\0';
     printf("Arrived message : %s", received_message);
     printf("Enter the message to send or end to terminate : ");
-    fgets(input_message, MSG_SIZE - 1, stdin);
+    fgets(input_message, MSG_SIZE, stdin);
     sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *) &service_addr, sizeof(service_addr));
-  //}
+  }
 
   close(sockfd);
   printf("---- Messenger Successfully Terminated ----");

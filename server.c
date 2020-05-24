@@ -37,19 +37,18 @@ int main(int argc, char** argv){
 
   cli_len = sizeof(client_addr);
 
-  received =  recvfrom(sockfd, (char *) received_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &addrlen);
+  received =  recvfrom(sockfd, (char *) received_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &cli_len);
   received_message[received] = '\0';
-  printf("Received message : %s\n", received_message);
+  printf("Received message : %s", received_message);
 
-  //while(strcmp(input_message, "end") != 0){
+  while(strcmp(input_message, "end") != 10){
     printf("Enter the message to send : ");
-    fgets(input_message, MSG_SIZE -1, stdin);
+    fgets(input_message, MSG_SIZE, stdin);
     sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *)&client_addr, cli_len);
-    //listen(sockfd, 1);
-    received =  recvfrom(sockfd, (char *) input_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &addrlen);
+    received =  recvfrom(sockfd, (char *) received_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &addrlen);
     received_message[received] = '\0';
-    printf("Received message : %s\n", received_message);
-  //}
+    printf("Received message : %s", received_message);
+  }
 
   close(sockfd);
   printf("---- Messenger Successfully Terminated ----");
