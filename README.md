@@ -5,9 +5,10 @@
 ## 1. How to run program
   - The program do have Makefile that support to build the program.
   ### make all (or simply make) : will compile all file (both client and server) need to run.
-  ### make client : will compile client.c and produce client.
-  ### make server : will compile server.c and produce server.
-  ### make clean : delete all file that were produce during process.
+  ###
+    - make client : will compile client.c and produce client.
+    - make server : will compile server.c and produce server.
+    - make clean : delete all file that were produce during process.
 
 ## 2. Program description
   - The program execute the chatting program between client and server back and forth. With UDP Socket Programmning, able to communicate with proper connection.
