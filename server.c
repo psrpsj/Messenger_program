@@ -13,6 +13,7 @@
 int main(int argc, char** argv){
   int sockfd, received;
   char input_message[MSG_SIZE];
+  char received_message[MSG_SIZE];
   struct sockaddr_in service_addr, client_addr;
   socklen_t addrlen;
 
@@ -31,18 +32,18 @@ int main(int argc, char** argv){
     exit(1);
   }
 
-  received =  recvfrom(sockfd, (char *) input_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &addrlen);
-  input_message[received] = '\0';
-  printf("Received message : %s\n", input_message);
+  received =  recvfrom(sockfd, (char *) received_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &addrlen);
+  received_message[received] = '\0';
+  printf("Received message : %s\n", received_message);
 
   //while(strcmp(input_message, "end") != 0){
     printf("Enter the message to send : ");
     fgets(input_message, MSG_SIZE -1, stdin);
-    sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *)&client_addr, addrlen);
+    sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *)&client_addr, sizeof(client_addr));
     //listen(sockfd, 1);
     received =  recvfrom(sockfd, (char *) input_message, MSG_SIZE, 0, (struct sockaddr *)&client_addr, &addrlen);
-    input_message[received] = '\0';
-    printf("Received message : %s\n", input_message);
+    received_message[received] = '\0';
+    printf("Received message : %s\n", received_message);
   //}
 
   close(sockfd);
