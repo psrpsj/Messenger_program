@@ -5,7 +5,7 @@
 ## 1. How to run program
   - The program do have Makefile that support to build the program.
   ### make all (or simply make) : will compile all file (both client and server) need to run.
-  ###
+  ### Command detail
     - make client : will compile client.c and produce client.
     - make server : will compile server.c and produce server.
     - make clean : delete all file that were produce during process.
