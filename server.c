@@ -41,7 +41,7 @@ int main(int argc, char** argv){
   received_message[received] = '\0';
   printf("Received message : %s", received_message);
 
-  while(strcmp(received_message, "end") != 10){
+  while(strcmp(received_message, "end\n") != 0){
     printf("Enter the message to send : ");
     fgets(input_message, MSG_SIZE, stdin);
     sendto(sockfd, (const char *)input_message, strlen(input_message), 0, (const struct sockaddr *)&client_addr, cli_len);
